@@ -1,11 +1,13 @@
-var gulp						= require('gulp');
-var less						= require('gulp-less');
-var autoprefixer		= require('gulp-autoprefixer');
-var csscomb					= require('gulp-csscomb');
-var imagemin				= require('gulp-imagemin');
-var browserSync			= require('browser-sync');
-var reload					= browserSync.reload;
+var gulp            = require('gulp');
+var less            = require('gulp-less');
+var autoprefixer    = require('gulp-autoprefixer');
+var uglify          = require('gulp-uglify');
+var csscomb         = require('gulp-csscomb');
+var imagemin        = require('gulp-imagemin');
+var browserSync     = require('browser-sync');
+var reload          = browserSync.reload;
 
+// Paths
 var paths = {
 	less: {
 		src: 'less/style.less',
@@ -13,25 +15,21 @@ var paths = {
 		watch: 'less/**'
 	},
 	html: {
-		watch: 'public/**/*.html',
+		watch: 'public/*.*'
 	},
-	images: {
-		watch: 'assets/img/*.*',
+	js: {
+		src: 'assets/js/*.js',
+		dest: 'public/js/',
+		watch: 'assets/js/**'
 	},
-	csscomb : {
-		src: [
-			'less/**',
-			'!less/1.base/_00-mixins.less',
-			'!less/1.base/_05-spacing.less',
-			'!less/1.base/_07-width.less',
-			'!less/1.base/_08-grid.less',
-			'!less/2.structure/_02-icons.less',
-			'!less/5.vendors/**'
-		],
-		dest: 'less/'
+	imgs: {
+		src: 'assets/img/*',
+		dest: 'public/img/',
+		watch: 'assets/img/*.*'
 	}
 };
 
+// Compile LESS + Autoprefix
 gulp.task('less', function () {
 	gulp.src(paths.less.src)
 		.pipe(less())
@@ -43,18 +41,22 @@ gulp.task('less', function () {
 		.pipe(reload({stream:true}));
 });
 
-gulp.task('csscomb', function () {
-	gulp.src(paths.csscomb.src)
-		.pipe(csscomb())
-		.pipe(gulp.dest(paths.csscomb.dest));
+// Uglify JS
+gulp.task('uglify', function(){
+	gulp.src(paths.js.src)
+		.pipe(uglify())
+		.pipe(gulp.dest(paths.js.dest))
+		.pipe(reload({stream:true}));
 });
 
-gulp.task('imagemin', () =>
-    gulp.src('assets/img/*')
-        .pipe(imagemin())
-        .pipe(gulp.dest('public/assets/img'))
-);
+// Images
+gulp.task('imagemin', function () {
+	gulp.src(paths.imgs.src)
+	.pipe(imagemin())
+	.pipe(gulp.dest(paths.imgs.dest));
+});
 
+// Browser sync
 gulp.task('browser-sync', function() {
 	browserSync({
 		server: {
@@ -68,13 +70,12 @@ gulp.task('bs-reload', function () {
 	browserSync.reload();
 });
 
-
-
 gulp.task('watch', ['browser-sync'], function () {
 	gulp.watch(paths.less.watch, ['less']);
+	gulp.watch(paths.js.watch, ['uglify']);
 	gulp.watch(paths.html.watch, ['bs-reload']);
-	gulp.watch(paths.images.watch, ['imagemin']);
+	gulp.watch(paths.imgs.watch, ['imagemin']);
 
 });
 
-gulp.task('default', ['less']);
+gulp.task('default', ['less', 'uglify', 'imagemin']);

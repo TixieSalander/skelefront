@@ -7,7 +7,8 @@ node_modules/
 
 demo
 public/css/
-public/assets/img/
+public/img/
+public/js/
 
 # OS
 .DS_Store
