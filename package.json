@@ -1,6 +1,6 @@
 {
   "name": "skelefront",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "devDependencies": {
     "bower": "latest",
     "browser-sync": "latest",
@@ -8,6 +8,7 @@
     "gulp-autoprefixer": "latest",
     "gulp-csscomb": "latest",
     "gulp-imagemin": "^3.0.1",
+    "gulp-uglify": "latest",
     "gulp-less": "latest"
   }
 }
